@@ -33,6 +33,7 @@ import {computed, markRaw, nextTick, onBeforeUnmount, onMounted, reactive, ref, 
 import GUI from "lil-gui";
 import {TimeSeriesLayer, type Meta} from "./lib/time-series-layer";
 import {ParticleFlowLayer} from "./lib/particle-flow-layer";
+import {ExtractStations} from "./lib/extract-stations";
 import {geoToUV} from "./lib/geo";
 import {usemapStore} from "@/store/modules/cesiumLastMap";
 import {useprolusionStore} from "@/store/modules/prolusion";
@@ -72,6 +73,10 @@ const VAR_CFG: Record<string, { label: string; unitLabel: string }> = {
 };
 
 const layerRef = shallowRef<AnyLayer | null>(null);
+/** 水位站点图层(extract.json points.series): 图标 + 站名 + 实时水位, 仅随工况加载, 模式切换不重建 */
+const stationLayerRef = shallowRef<ExtractStations | null>(null);
+/** 已加载站点图层的工况名(模式切换重建图层时避免重复拉取 extract.json) */
+let stationsScenario = "";
 
 const ready = ref(false);
 const scenario = ref("0.5P");
@@ -123,6 +128,7 @@ function toLayerTime(timestamp: number) {
 function updateTime(time: number) {
   currentTime.value = Math.min(Math.max(time, startT), duration.value);
   layerRef.value?.setTime(currentTime.value);
+  stationLayerRef.value?.setTime(currentTime.value); // 水位站点实时值同步刷新
 }
 
 /** ybPanl 时间变化(面板毫秒) → 数据相对秒. */
@@ -342,6 +348,7 @@ async function buildLayer() {
       guiStats.hint = `${guiStats.chunks} 分块 · GPU 相邻帧插值`;
     }
     ready.value = true;
+    await syncStations(); // 水位站点(仅随工况变化): 失败不阻塞主图层
     if (savedCam) restoreCam(); // 切工况/模式: 保持原视口
     else layerRef.value?.flyTo(); // 首次加载: 飞到图层范围
     // 图层已建: 停止播放并归零到图层起始(面板经 setYbTime 同步, watch 变化时回发 timeChange, 幂等)
@@ -352,6 +359,19 @@ async function buildLayer() {
     building = false;
     scenarioCtrl?.enable();
     seriesCtrl?.enable();
+  }
+}
+
+/** 加载/重建水位站点图层(extract.json): 仅工况变化时重新拉取, 缺失/失败只打日志不阻塞主图层. */
+async function syncStations() {
+  if (stationsScenario === scenario.value && stationLayerRef.value) return;
+  stationLayerRef.value?.destroy();
+  stationLayerRef.value = null;
+  try {
+    stationLayerRef.value = await ExtractStations.create({viewer: viewer!, dataDir: scenario.value, mapType: mapStore.mapType});
+    stationsScenario = scenario.value;
+  } catch (e) {
+    console.error("extract.json 水位站点加载失败", e);
   }
 }
 
@@ -567,6 +587,7 @@ onBeforeUnmount(() => {
   document.documentElement.style.fontSize = prevRootFontSize;
   postRenderRemover?.();
   layerRef.value?.destroy();
+  stationLayerRef.value?.destroy(); // viewer 是共享实例, 卸载时摘除站点 datasource
 });
 </script>
 
