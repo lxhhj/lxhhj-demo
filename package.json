@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build:prod": "vite build --mode production",
-    "build:staging": "vite build --mode staging",
+    "build:staging": "vite build --mode staging && node scripts/fix-cesium-copy.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
