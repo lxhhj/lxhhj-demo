@@ -13,7 +13,8 @@ export default defineConfig(({mode}) => {
         optimizeDeps: {
             include: ['simplex-noise', '@tweenjs/tween.js'], // 强制包含 simplex-noise
         },
-        base: '/',
+        // staging 模式部署到 GitHub Pages 项目子路径,生产保持根路径
+        base: mode === 'staging' ? '/lxhhj-demo/' : '/',
         plugins: [
             vue(),
             // vitePluginMars3d(),
