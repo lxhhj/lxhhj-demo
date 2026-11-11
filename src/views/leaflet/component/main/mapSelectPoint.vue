@@ -19,8 +19,8 @@ import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet-draw'
-import 'leaflet-fullscreen'
-import 'leaflet-fullscreen/dist/leaflet.fullscreen.css'
+import 'leaflet.fullscreen'
+import 'leaflet.fullscreen/dist/Control.FullScreen.css'
 import {generateUUID} from "@/utils/dictionary";
 
 // ref

@@ -38,6 +38,7 @@
     "jsencrypt": "^3.3.2",
     "leaflet": "^1.0.3",
     "leaflet-draw": "^1.0.4",
+    "leaflet.fullscreen": "^5.3.3",
     "lil-gui": "^0.20.0",
     "lru-cache": "^11.2.1",
     "mars3d": "3.5.0",
