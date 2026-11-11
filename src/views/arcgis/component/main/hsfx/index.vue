@@ -25,7 +25,7 @@ import arrow3 from 'web/assets/arrow/arrow3.png';
 import {createAndMount} from "./utils";
 import proj4 from "proj4";
 // Component
-import ColorMapping from "web/components/legend/colorMapping.vue";
+import ColorMapping from "web/components/legend/ColorMapping.vue";
 import ArrowSelect from "web/components/arrow-select.vue";
 import Ramp from "web/components/legend/Ramp.vue";
 
