@@ -801,7 +801,7 @@ export const constantRoutes = [
                 children: [
                     {
                         path: 'helloWebgpu',
-                        component: () => import('@/views/webgpu/component/main/hellowebgpu.vue'),
+                        component: () => import('@/views/webgpu/component/main/helloWebgpu.vue'),
                         name: 'Webgpu-Main-HelloWebgpu',
                         meta: {title: 'helloWebgpu', icon: '', affix: true},
                     },
