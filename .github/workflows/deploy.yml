@@ -36,7 +36,7 @@ jobs:
       - name: Build (staging)
         run: yarn build:staging
         env:
-          NODE_OPTIONS: --max_old_space_size=4096
+          NODE_OPTIONS: --max_old_space_size=8192
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
